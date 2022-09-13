@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 
-import '../resource/const.dart';
+import '../resource/resource.dart';
 
 class RadialMenu extends StatefulWidget {
   // will take in list of buttons
@@ -171,7 +171,7 @@ class RadialAnimation extends StatelessWidget {
                     ),
                     child: Image.asset(
                       clover,
-                      scale: 4,
+                      scale: 5,
                       fit: BoxFit.contain,
                     ),
                   ),

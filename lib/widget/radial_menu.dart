@@ -15,11 +15,17 @@ class RadialMenu extends StatefulWidget {
   // set main button size
   final double centerButtonSize;
 
-  // constructor for main button
+  /// Track state of clover button
+  final bool isOpen;
+
+  /// Tap clover button
+  final VoidCallback onTap;
   RadialMenu(
       {Key? key,
       required this.children,
       this.centerButtonSize = 0.2,
+      required this.isOpen,
+      required this.onTap,
       this.centerButtonAlignment = Alignment.center})
       : super(key: key);
 
@@ -35,8 +41,8 @@ class _RadialMenuState extends State<RadialMenu>
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: Duration(milliseconds: 900), vsync: this);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
   }
 
   @override
@@ -44,9 +50,11 @@ class _RadialMenuState extends State<RadialMenu>
     return Align(
       alignment: widget.centerButtonAlignment,
       child: SizedBox(
-        width: 250,
-        height: 250,
+        width: 400,
+        height: 400,
         child: RadialAnimation(
+          onTap: widget.onTap,
+          isOpen: widget.isOpen,
           controller: controller!,
           radialButtons: widget.children,
           centerSizeOfButton: widget.centerButtonSize,
@@ -65,8 +73,13 @@ class _RadialMenuState extends State<RadialMenu>
 
 // Here all the animation will take place
 class RadialAnimation extends StatelessWidget {
+  /// if clover is open, close it or else open it
+  final VoidCallback onTap;
+  final bool isOpen;
   RadialAnimation(
       {Key? key,
+      required this.onTap,
+      required this.isOpen,
       required this.controller,
       required this.radialButtons,
       this.centerSizeOfButton = 0.5})
@@ -74,9 +87,11 @@ class RadialAnimation extends StatelessWidget {
         // translation animation
         translation = Tween<double>(
           begin: 0.0,
-          end: 100.0,
+
+          /// TODO: Change this value if you want to set more distance of radial buttons
+          end: 140.0,
         ).animate(
-          CurvedAnimation(parent: controller, curve: Curves.elasticOut),
+          CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn),
         ),
 
         // scaling animation
@@ -89,15 +104,15 @@ class RadialAnimation extends StatelessWidget {
 
         // rotation animation
         rotation = Tween<double>(
-          begin: 0.0,
-          end: 360.0,
+          begin: -270.0,
+          end: -180.0,
         ).animate(
           CurvedAnimation(
             parent: controller,
-            curve: Interval(
+            curve: const Interval(
               0.0,
-              0.7,
-              curve: Curves.decelerate,
+              0.5,
+              curve: Curves.fastOutSlowIn,
             ),
           ),
         ),
@@ -113,7 +128,8 @@ class RadialAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // will provide angle for further calculation
-    double generatedAngle = 360 / (radialButtons.length);
+    ///For 5 buttons, this is perfectly working
+    double generatedAngle = 220 / (radialButtons.length);
     double iconAngle;
 
     return AnimatedBuilder(
@@ -127,43 +143,37 @@ class RadialAnimation extends StatelessWidget {
               // generates list of buttons
               ...radialButtons.map(
                 (index) {
-                  iconAngle = radialButtons.indexOf(index) * generatedAngle;
-                  return SizedBox(
-                    child: _buildButton(
-                      iconAngle,
-                      color: index.buttonColor,
-                      icon: index.icon,
-                      onPress: index.onPress,
-                    ),
+                  ///TODO: Change this icon angle if Number of buttons are more than or less than 5
+                  /// assert( numOfButtons == 5 );
+                  /// After 10 minutes of brain storming, I finally realized that button angles are a little bit mis-aligned.
+                  /// So I customized the angle again,
+                  iconAngle = radialButtons.indexOf(index) * generatedAngle + 2;
+                  return _buildButton(
+                    /// If angles are perfectly aligned, it will not look good, so I changed it a little bit
+                    checkAngle(iconAngle),
+                    color: index.buttonColor,
+                    text: index.text,
+                    onPress: index.onPress,
                   );
                 },
               ),
-              // secondary button animation
-              /* Transform.scale(
-                scale: scale.value - (centerSizeOfButton * 2 - 0.25),
-                child: FloatingActionButton(
-                    onPressed: close,
-                    backgroundColor: Colors.green,
-                    child: const Icon(Icons.circle)),
-              ), */
-              // primary button animation
-              /* Transform.scale(
-                scale: scale.value,
-                child: FloatingActionButton(
-                  onPressed: open,
-                  backgroundColor: Colors.green,
-                  child: const Icon(Icons.circle),
-                ),
-              ), */
               Transform.rotate(
-                angle: scale.value - 1,
-                child: FloatingActionButton(
-                  elevation: 0,
-                  onPressed: open,
-                  backgroundColor: Colors.transparent,
-                  child: Image.asset(
-                    clover,
-                    fit: BoxFit.contain,
+                angle: radians(rotation.value),
+                child: GestureDetector(
+                  onTap: () {
+                    isOpen ? close() : open();
+                    onTap();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Image.asset(
+                      clover,
+                      scale: 4,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
@@ -186,21 +196,77 @@ class RadialAnimation extends StatelessWidget {
 
   // build custom child buttons
   Widget _buildButton(double angle,
-      {Function? onPress, Color? color, Icon? icon}) {
+      {Function? onPress, Color? color, String? text}) {
     final double rad = radians(angle);
     return Transform(
       transform: Matrix4.identity()
         ..translate(
             (translation.value) * cos(rad), (translation.value) * sin(rad)),
-      child: FloatingActionButton(
-          backgroundColor: color,
-          onPressed: () {
+      child: AnimatedOpacity(
+        opacity: checkOpacity(translation.value),
+        duration: const Duration(milliseconds: 300),
+        child: GestureDetector(
+          onTap: () {
             onPress!();
             close();
           },
-          elevation: 0,
-          child: icon),
+          child: Container(
+
+              ///TODO: Change this value to set size of radial buttons
+              width: 100,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+              child: Transform.rotate(
+                /// Value of Pi is 180 degrees
+                angle: pi,
+                child: Text(
+                  text!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              )),
+        ),
+      ),
     );
+  }
+
+  ///Position radial buttons in place
+  double checkAngle(double angle) {
+    if (angle < 45) {
+      return 0;
+    } else if (angle < 90) {
+      /// NOTE: Reduced 10 degree to look good second button
+      return 35;
+    } else if (angle < 130) {
+      return 90;
+    } else if (angle < 170) {
+      /// NOTE: Added 10 more degrees to look good fourth button
+      return 145;
+    } else {
+      return 180;
+    }
+  }
+
+  /// If Clover is closed, radial buttons are invisible
+  double checkOpacity(double value) {
+    if (value < 10) {
+      return 0.0;
+    } else if (value < 20) {
+      return 0.2;
+    } else if (value < 30) {
+      return 0.5;
+    } else if (value < 40) {
+      return 0.8;
+    } else {
+      return 1;
+    }
   }
 }
 
@@ -209,7 +275,7 @@ class RadialButton {
   final Color buttonColor;
 
   // sets icon of the child buttons
-  final Icon icon;
+  final String text;
 
   // onPress function of the child buttons
   final Function onPress;
@@ -217,6 +283,6 @@ class RadialButton {
   // constructor for child buttons
   RadialButton(
       {this.buttonColor = Colors.green,
-      required this.icon,
+      required this.text,
       required this.onPress});
 }

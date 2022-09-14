@@ -39,26 +39,28 @@ class _HomeState extends State<Home> {
               children: [
                 Text('Points'),
                 Container(
+                  alignment: Alignment.center,
                   width: 55,
                   height: 36,
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Center(child: Text('100')),
+                  child: Text('100'),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 25),
           Container(
+            alignment: Alignment.center,
             height: 45,
             width: 130,
             decoration: BoxDecoration(
               color: Colors.redAccent,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(child: Text('Points စုရန်')),
+            child: Text('Points စုရန်'),
           ),
           RadialMenu(
             isOpen: isOpen,
@@ -68,12 +70,12 @@ class _HomeState extends State<Home> {
               });
             },
             children: [
-              RadialButton(text: 'ရို့ရို့', onPress: () {}),
-              RadialButton(text: 'ငြိမ်း', onPress: () {}),
-              // RadialButton(text: 'Some Text', onPress: () {}),
-              RadialButton(text: 'ညီမလေး', onPress: () {}),
-              RadialButton(text: 'မမ', onPress: () {}),
-              RadialButton(text: 'အကုန်ချစ်', onPress: () {}),
+              RadialButton(text: 'ထိုးကွက်', onPress: () {}),
+              RadialButton(text: '၀မ်းချိန်း', onPress: () {}),
+              RadialButton(text: 'Ch + Key', onPress: () {}),
+              RadialButton(text: 'မွေးကွက်', onPress: () {}),
+              RadialButton(text: 'လုံးပိုင်', onPress: () {}),
+              RadialButton(text: 'တစ်ကွက်ကောင်း', onPress: () {}),
             ],
           ),
         ],

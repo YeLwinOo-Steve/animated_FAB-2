@@ -89,7 +89,7 @@ class RadialAnimation extends StatelessWidget {
           begin: 0.0,
 
           /// TODO: Change this value if you want to set more distance of radial buttons
-          end: 140.0,
+          end: 120.0,
         ).animate(
           CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn),
         ),
@@ -129,7 +129,7 @@ class RadialAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     // will provide angle for further calculation
     ///For 5 buttons, this is perfectly working
-    double generatedAngle = 220 / (radialButtons.length);
+    double generatedAngle = 220 / radialButtons.length;
     double iconAngle;
 
     return AnimatedBuilder(
@@ -147,7 +147,7 @@ class RadialAnimation extends StatelessWidget {
                   /// assert( numOfButtons == 5 );
                   /// After 10 minutes of brain storming, I finally realized that button angles are a little bit mis-aligned.
                   /// So I customized the angle again,
-                  iconAngle = radialButtons.indexOf(index) * generatedAngle + 2;
+                  iconAngle = radialButtons.indexOf(index) * generatedAngle + 5;
                   return _buildButton(
                     /// If angles are perfectly aligned, it will not look good, so I changed it a little bit
                     checkAngle(iconAngle),
@@ -211,27 +211,26 @@ class RadialAnimation extends StatelessWidget {
             close();
           },
           child: Container(
-
-              ///TODO: Change this value to set size of radial buttons
-              width: 100,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
-              child: Transform.rotate(
-                /// Value of Pi is 180 degrees
-                angle: pi,
-                child: Text(
-                  text!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+            ///TODO: Change this value to set size of radial buttons
+            width: 100,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+            child: Transform.rotate(
+              /// Value of Pi is 180 degrees
+              angle: pi,
+              child: Text(
+                text!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
                 ),
-              )),
+              ),
+            ),
+          ),
         ),
       ),
     );

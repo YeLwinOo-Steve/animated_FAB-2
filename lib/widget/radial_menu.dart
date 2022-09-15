@@ -20,7 +20,7 @@ class RadialMenu extends StatefulWidget {
 
   /// Tap clover button
   final VoidCallback onTap;
-  RadialMenu(
+  const RadialMenu(
       {Key? key,
       required this.children,
       this.centerButtonSize = 0.2,
@@ -29,6 +29,7 @@ class RadialMenu extends StatefulWidget {
       this.centerButtonAlignment = Alignment.center})
       : super(key: key);
 
+  @override
   createState() => _RadialMenuState();
 }
 
@@ -129,7 +130,7 @@ class RadialAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     // will provide angle for further calculation
     ///For 5 buttons, this is perfectly working
-    double generatedAngle = 220 / radialButtons.length;
+    double generatedAngle = 360 / radialButtons.length;
     double iconAngle;
 
     return AnimatedBuilder(
@@ -147,10 +148,10 @@ class RadialAnimation extends StatelessWidget {
                   /// assert( numOfButtons == 5 );
                   /// After 10 minutes of brain storming, I finally realized that button angles are a little bit mis-aligned.
                   /// So I customized the angle again,
-                  iconAngle = radialButtons.indexOf(index) * generatedAngle + 5;
+                  iconAngle = radialButtons.indexOf(index) * generatedAngle;
                   return _buildButton(
                     /// If angles are perfectly aligned, it will not look good, so I changed it a little bit
-                    checkAngle(iconAngle),
+                    iconAngle,
                     color: index.buttonColor,
                     text: index.text,
                     onPress: index.onPress,
@@ -224,9 +225,10 @@ class RadialAnimation extends StatelessWidget {
               child: Text(
                 text!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: text == 'Ch + Key' ? 16 : 20,
                   color: Colors.white,
+                  fontWeight: FontWeightManager.semibold,
                 ),
               ),
             ),
@@ -237,7 +239,7 @@ class RadialAnimation extends StatelessWidget {
   }
 
   ///Position radial buttons in place
-  double checkAngle(double angle) {
+  /*  double checkAngle(double angle) {
     if (angle < 45) {
       return 0;
     } else if (angle < 90) {
@@ -251,17 +253,17 @@ class RadialAnimation extends StatelessWidget {
     } else {
       return 180;
     }
-  }
+  } */
 
   /// If Clover is closed, radial buttons are invisible
   double checkOpacity(double value) {
     if (value < 10) {
       return 0.0;
-    } else if (value < 20) {
-      return 0.2;
     } else if (value < 30) {
-      return 0.5;
+      return 0.2;
     } else if (value < 40) {
+      return 0.5;
+    } else if (value < 50) {
       return 0.8;
     } else {
       return 1;

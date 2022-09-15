@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../resource/png_svg.dart';
+import '../resource/resource.dart';
+import '../resource/route_manager.dart';
 import '../widget/radial_menu.dart';
 
 class Home extends StatefulWidget {
@@ -15,15 +16,78 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 35),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.close, color: ColorManager.primary),
+              ),
+              ListTile(
+                onTap: () => Navigator.pushNamed(context, AppRoutes.about2D),
+                leading: const Text(
+                  '2D နှင့်ပတ်သက်သောသိမှတ်ဖွယ်ရာများ',
+                  style: TextStyle(
+                    fontSize: FontSize.body2,
+                    fontWeight: FontWeightManager.semibold,
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios,
+                    color: ColorManager.primary),
+              ),
+              const Divider(indent: 10, endIndent: 50),
+              ListTile(
+                onTap: () => Navigator.pushNamed(context, AppRoutes.aboutApp),
+                leading: const Text(
+                  'App အကြောင်း',
+                  style: TextStyle(
+                    fontSize: FontSize.body2,
+                    fontWeight: FontWeightManager.semibold,
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios,
+                    color: ColorManager.primary),
+              ),
+              const Divider(indent: 10, endIndent: 50),
+              const SizedBox(height: 60),
+              const Align(
+                heightFactor: 2,
+                child: Text(
+                  'Wave Pay',
+                  style: TextStyle(fontSize: FontSize.body2),
+                ),
+              ),
+              const Align(
+                child: Text(
+                  '09777662003',
+                  style: TextStyle(
+                    fontSize: FontSize.body2,
+                    fontWeight: FontWeightManager.semibold,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade50,
+        automaticallyImplyLeading: false,
+        backgroundColor: ColorManager.white,
         elevation: 0,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.menu,
-              color: Colors.green,
+          Builder(
+            builder: (context) => IconButton(
+              padding: const EdgeInsets.only(right: 15),
+              icon: const Icon(Icons.menu, color: ColorManager.primary),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
           ),
         ],
@@ -37,7 +101,10 @@ class _HomeState extends State<Home> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Points'),
+                const Text(
+                  'Points',
+                  style: TextStyle(fontSize: FontSize.body2),
+                ),
                 Container(
                   alignment: Alignment.center,
                   width: 55,
@@ -46,7 +113,15 @@ class _HomeState extends State<Home> {
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text('100'),
+                  child: Text(
+                    //textAlign: TextAlign.center,
+                    '100',
+                    style: TextStyle(
+                      fontSize: FontSize.body2,
+                      color: ColorManager.white,
+                      fontWeight: FontWeightManager.semibold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -54,13 +129,22 @@ class _HomeState extends State<Home> {
           const SizedBox(height: 25),
           Container(
             alignment: Alignment.center,
+            margin: const EdgeInsets.only(top: 11),
             height: 45,
             width: 130,
             decoration: BoxDecoration(
               color: Colors.redAccent,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text('Points စုရန်'),
+            child: Text(
+              textAlign: TextAlign.center,
+              'Points စုရန်',
+              style: TextStyle(
+                fontSize: FontSize.body2,
+                color: ColorManager.white,
+                fontWeight: FontWeightManager.semibold,
+              ),
+            ),
           ),
           RadialMenu(
             isOpen: isOpen,
@@ -70,12 +154,42 @@ class _HomeState extends State<Home> {
               });
             },
             children: [
-              RadialButton(text: 'ထိုးကွက်', onPress: () {}),
-              RadialButton(text: '၀မ်းချိန်း', onPress: () {}),
-              RadialButton(text: 'Ch + Key', onPress: () {}),
-              RadialButton(text: 'မွေးကွက်', onPress: () {}),
-              RadialButton(text: 'လုံးပိုင်', onPress: () {}),
-              RadialButton(text: 'တစ်ကွက်ကောင်း', onPress: () {}),
+              RadialButton(
+                text: 'ထိုးကွက်',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.htoeKwat);
+                },
+              ),
+              RadialButton(
+                text: '၀မ်းချိန်း',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.oneChange);
+                },
+              ),
+              RadialButton(
+                text: 'Ch + Key',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.chPlusKey);
+                },
+              ),
+              RadialButton(
+                text: 'မွေးကွက်',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.mwalKwat);
+                },
+              ),
+              RadialButton(
+                text: 'လုံးပိုင်',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.lonePine);
+                },
+              ),
+              RadialButton(
+                text: 'တစ်ကွက်ကောင်း',
+                onPress: () {
+                  Navigator.pushNamed(context, AppRoutes.taKwatKaung);
+                },
+              ),
             ],
           ),
         ],
@@ -86,49 +200,58 @@ class _HomeState extends State<Home> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              height: 45,
-              width: 111.67,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    viber,
-                    height: 25,
-                    width: 25,
-                  ),
-                  const Text('Viber'),
-                ],
+            InkWell(
+              onTap: () {},
+              child: SizedBox(
+                height: 45,
+                width: 111.67,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      viber,
+                      height: 25,
+                      width: 25,
+                    ),
+                    const Text('Viber'),
+                  ],
+                ),
               ),
             ),
-            SizedBox(
-              height: 45,
-              width: 111.67,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    facebook,
-                    height: 25,
-                    width: 25,
-                  ),
-                  const Text('Facebook'),
-                ],
+            InkWell(
+              onTap: () {},
+              child: SizedBox(
+                height: 45,
+                width: 111.67,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      facebook,
+                      height: 25,
+                      width: 25,
+                    ),
+                    const Text('Facebook'),
+                  ],
+                ),
               ),
             ),
-            SizedBox(
-              height: 45,
-              width: 111.67,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    rating,
-                    height: 25,
-                    width: 25,
-                  ),
-                  const Text('Rating'),
-                ],
+            InkWell(
+              onTap: () {},
+              child: SizedBox(
+                height: 45,
+                width: 111.67,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      rating,
+                      height: 25,
+                      width: 25,
+                    ),
+                    const Text('Rating'),
+                  ],
+                ),
               ),
             ),
           ],

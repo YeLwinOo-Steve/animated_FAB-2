@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lucky_number_2d/bindings.dart';
 
 import 'presentation/home.dart';
 import 'resource/route_manager.dart';
@@ -11,9 +13,10 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      initialBinding: HomeBinding(),
       initialRoute: AppRoutes.home,
       onGenerateRoute: RouteGenerator.onGenerateRoute,
       home: const Home(),

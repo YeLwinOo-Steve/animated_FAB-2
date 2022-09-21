@@ -27,25 +27,25 @@ class RouteGenerator {
   static Route<dynamic> onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case AppRoutes.splash:
-        return MaterialPageRoute(builder: (context) => const Home());
+        return MaterialPageRoute(builder: (context) => Home());
       case AppRoutes.taKwatKaung:
-        return MaterialPageRoute(builder: (context) => const TaKwatKaung());
+        return MaterialPageRoute(builder: (context) => TaKwatKaung());
       case AppRoutes.lonePine:
-        return MaterialPageRoute(builder: (context) => const LonePine());
+        return MaterialPageRoute(builder: (context) => LonePine());
       case AppRoutes.oneChange:
-        return MaterialPageRoute(builder: (context) => const OneChange());
+        return MaterialPageRoute(builder: (context) => OneChange());
       case AppRoutes.mwalKwat:
-        return MaterialPageRoute(builder: (context) => const MwalKwat());
+        return MaterialPageRoute(builder: (context) => MwalKwat());
       case AppRoutes.chPlusKey:
-        return MaterialPageRoute(builder: (context) => const ChPlusKey());
+        return MaterialPageRoute(builder: (context) => ChPlusKey());
       case AppRoutes.htoeKwat:
-        return MaterialPageRoute(builder: (context) => const HtoeKwat());
+        return MaterialPageRoute(builder: (context) => HtoeKwat());
       case AppRoutes.about2D:
-        return MaterialPageRoute(builder: (context) => const About2D());
+        return MaterialPageRoute(builder: (context) => About2D());
       case AppRoutes.aboutApp:
-        return MaterialPageRoute(builder: (context) => const AboutApp());
+        return MaterialPageRoute(builder: (context) => AboutApp());
       default:
-        return MaterialPageRoute(builder: (context) => const Home());
+        return MaterialPageRoute(builder: (context) => Home());
     }
   }
 }

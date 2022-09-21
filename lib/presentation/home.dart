@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../domain/controller.dart';
 import '../resource/resource.dart';
 import '../resource/route_manager.dart';
 import '../widget/radial_menu.dart';
@@ -11,7 +14,15 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+Future<void> _launchViber() async {
+  await launchUrl(
+    Uri.parse('viber://pa?chatURI=+959972090952'),
+    mode: LaunchMode.externalNonBrowserApplication,
+  );
+}
+
 class _HomeState extends State<Home> {
+  final controller = Get.find<LotteryController>();
   bool isOpen = false;
   @override
   Widget build(BuildContext context) {
@@ -157,37 +168,41 @@ class _HomeState extends State<Home> {
               RadialButton(
                 text: 'ထိုးကွက်',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.htoeKwat);
+                  controller.lotteryByType(context: context, type: 'numbers');
                 },
               ),
               RadialButton(
                 text: '၀မ်းချိန်း',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.oneChange);
+                  controller.lotteryByType(
+                      context: context, type: 'one_change');
                 },
               ),
               RadialButton(
                 text: 'Ch + Key',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.chPlusKey);
+                  controller.lotteryByType(context: context, type: 'ch_key');
                 },
               ),
               RadialButton(
                 text: 'မွေးကွက်',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.mwalKwat);
+                  controller.lotteryByType(
+                      context: context, type: 'own_number');
                 },
               ),
               RadialButton(
                 text: 'လုံးပိုင်',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.lonePine);
+                  controller.lotteryByType(
+                      context: context, type: 'lone_paing');
                 },
               ),
               RadialButton(
                 text: 'တစ်ကွက်ကောင်း',
                 onPress: () {
-                  Navigator.pushNamed(context, AppRoutes.taKwatKaung);
+                  controller.lotteryByType(
+                      context: context, type: 'one_number');
                 },
               ),
             ],
@@ -201,7 +216,9 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {
+                _launchViber();
+              },
               child: SizedBox(
                 height: 45,
                 width: 111.67,

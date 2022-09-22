@@ -10,18 +10,18 @@ class LonePine extends StatelessWidget {
   final controller = Get.find<LotteryController>();
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text('လုံးပိုင်',
             style: TextStyle(color: ColorManager.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: EdgeInsets.only(top: screenHeight * 0.18, left: 15, right: 15),
         child: controller.obx(
           (state) {
             ApiResponse response = state;
             return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
@@ -41,13 +41,13 @@ class LonePine extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 65),
+                SizedBox(height: screenHeight * 0.1),
                 RichText(
                   text: TextSpan(
                     style: const TextStyle(fontSize: FontSize.body2),
                     children: [
                       const TextSpan(
-                        text: 'တစ်ကွက်ကောင်း',
+                        text: 'လုံးပိုင်',
                         style: TextStyle(color: ColorManager.primary),
                       ),
                       TextSpan(

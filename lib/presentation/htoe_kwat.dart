@@ -11,13 +11,14 @@ class HtoeKwat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title:
             const Text('ထိုးကွက်', style: TextStyle(color: ColorManager.black)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: EdgeInsets.only(top: screenHeight * 0.18, left: 15, right: 15),
         child: controller.obx(
           (state) {
             ApiResponse response = state;
@@ -27,7 +28,7 @@ class HtoeKwat extends StatelessWidget {
             for (int i = 1; i < htoeKwat.length - 1; i++) {
               str += htoeKwat[i];
 
-              if (i % 4 == 0) {
+              if (str.length % 4 == 0) {
                 str += '\n';
               } else {
                 str += ',';
@@ -36,11 +37,27 @@ class HtoeKwat extends StatelessWidget {
             str += htoeKwat[htoeKwat.length - 1];
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(str),
-                const SizedBox(height: 65),
+                SizedBox(
+                  height: screenHeight * 0.2,
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenHeight * 0.1),
+                    physics: const BouncingScrollPhysics(),
+                    child: Text(
+                      str,
+                      style: const TextStyle(
+                        color: ColorManager.primary,
+                        fontSize: 24,
+                        fontWeight: FontWeightManager.semibold,
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.1),
                 RichText(
                   text: TextSpan(
                     style: const TextStyle(fontSize: FontSize.body2),

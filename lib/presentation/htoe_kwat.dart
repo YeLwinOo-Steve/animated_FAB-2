@@ -42,17 +42,21 @@ class HtoeKwat extends StatelessWidget {
                 SizedBox(
                   height: screenHeight * 0.2,
                   width: double.infinity,
-                  child: SingleChildScrollView(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenHeight * 0.1),
-                    physics: const BouncingScrollPhysics(),
-                    child: Text(
-                      str,
-                      style: const TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 24,
-                        fontWeight: FontWeightManager.semibold,
-                        letterSpacing: 3,
+                  child: Scrollbar(
+                    radius: const Radius.circular(10),
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenHeight * 0.1),
+                      physics: const BouncingScrollPhysics(),
+                      child: Text(
+                        str,
+                        style: const TextStyle(
+                          color: ColorManager.primary,
+                          fontSize: 24,
+                          fontWeight: FontWeightManager.semibold,
+                          letterSpacing: 3,
+                        ),
                       ),
                     ),
                   ),

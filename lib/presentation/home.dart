@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../data/adservice/ad_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../domain/controller.dart';
@@ -22,10 +24,90 @@ Future<void> _launchViber() async {
 }
 
 class _HomeState extends State<Home> {
+  BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
+  RewardedAd? _rewardedAd;
+  @override
+  void initState() {
+    super.initState();
+    _createBannerAd();
+    _createInterstitialAd();
+    _createRewardedAd();
+  }
+
+  void _createBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.largeBanner,
+      adUnitId: AdMobService.bannerAdUnitId!,
+      listener: AdMobService.bannerAdListener,
+      request: const AdRequest(),
+    )..load();
+  }
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdMobService.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => _interstitialAd = ad,
+        onAdFailedToLoad: (error) => _interstitialAd = null,
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      _interstitialAd!.show();
+      _interstitialAd = null;
+    }
+  }
+
+  void _createRewardedAd() {
+    RewardedAd.load(
+      adUnitId: AdMobService.rewardedAdUnitId!,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) => setState(() => _rewardedAd = ad),
+        onAdFailedToLoad: (error) => setState(() => _rewardedAd = null),
+      ),
+    );
+  }
+
+  void _showRewardedAd() {
+    if (_rewardedAd != null) {
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _createRewardedAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _createRewardedAd();
+        },
+      );
+      //TODO: increase points
+      _rewardedAd!.show(
+        onUserEarnedReward: (ad, reward) => setState(() {}),
+      );
+      _rewardedAd = null;
+    }
+  }
+
   final controller = Get.find<LotteryController>();
   bool isOpen = false;
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       endDrawer: Drawer(
         width: double.infinity,
@@ -97,7 +179,10 @@ class _HomeState extends State<Home> {
             builder: (context) => IconButton(
               padding: const EdgeInsets.only(right: 15),
               icon: const Icon(Icons.menu, color: ColorManager.primary),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              onPressed: () {
+                _showInterstitialAd();
+                Scaffold.of(context).openEndDrawer();
+              },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
           ),
@@ -138,22 +223,28 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(height: 25),
-          Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 11),
-            height: 45,
-            width: 130,
-            decoration: BoxDecoration(
-              color: Colors.redAccent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              textAlign: TextAlign.center,
-              'Points စုရန်',
-              style: TextStyle(
-                fontSize: FontSize.body2,
-                color: ColorManager.white,
-                fontWeight: FontWeightManager.semibold,
+          InkWell(
+            splashColor: ColorManager.red,
+            highlightColor: ColorManager.white,
+            borderRadius: BorderRadius.circular(10),
+            onTap: () => _showRewardedAd(),
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(3),
+              height: 45,
+              width: 130,
+              decoration: BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text(
+                textAlign: TextAlign.center,
+                'Points စုရန်',
+                style: TextStyle(
+                  fontSize: FontSize.body2,
+                  color: ColorManager.white,
+                  fontWeight: FontWeightManager.semibold,
+                ),
               ),
             ),
           ),
@@ -178,12 +269,12 @@ class _HomeState extends State<Home> {
                       context: context, type: 'one_change');
                 },
               ),
-              RadialButton(
+              /* RadialButton(
                 text: 'Ch + Key',
                 onPress: () {
                   controller.lotteryByType(context: context, type: 'ch_key');
                 },
-              ),
+              ), */
               RadialButton(
                 text: 'မွေးကွက်',
                 onPress: () {
@@ -209,66 +300,81 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      bottomNavigationBar: SizedBox(
+        height: screenHeight * 0.2,
+        width: double.infinity,
+        child: Column(
           children: [
-            InkWell(
-              onTap: () {
-                _launchViber();
-              },
-              child: SizedBox(
-                height: 45,
-                width: 111.67,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      viber,
-                      height: 25,
-                      width: 25,
+            _bannerAd == null
+                ? Container()
+                : Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    height: screenHeight * 0.1,
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      //_launchViber();
+                    },
+                    child: SizedBox(
+                      height: 45,
+                      width: 111.67,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset(
+                            viber,
+                            height: 25,
+                            width: 25,
+                          ),
+                          const Text('Viber'),
+                        ],
+                      ),
                     ),
-                    const Text('Viber'),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: SizedBox(
-                height: 45,
-                width: 111.67,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      facebook,
-                      height: 25,
-                      width: 25,
+                  ),
+                  InkWell(
+                    onTap: () {},
+                    child: SizedBox(
+                      height: 45,
+                      width: 111.67,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset(
+                            facebook,
+                            height: 25,
+                            width: 25,
+                          ),
+                          const Text('Facebook'),
+                        ],
+                      ),
                     ),
-                    const Text('Facebook'),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: SizedBox(
-                height: 45,
-                width: 111.67,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      rating,
-                      height: 25,
-                      width: 25,
+                  ),
+                  InkWell(
+                    onTap: () {},
+                    child: SizedBox(
+                      height: 45,
+                      width: 111.67,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset(
+                            rating,
+                            height: 25,
+                            width: 25,
+                          ),
+                          const Text('Rating'),
+                        ],
+                      ),
                     ),
-                    const Text('Rating'),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

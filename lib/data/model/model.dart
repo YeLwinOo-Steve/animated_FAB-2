@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-ApiResponse increaseFromJson(String str) => ApiResponse.fromJson(json.decode(str));
+ApiResponse increaseFromJson(String str) =>
+    ApiResponse.fromJson(json.decode(str));
 
 String increaseToJson(ApiResponse data) => json.encode(data.toJson());
 
@@ -15,7 +16,7 @@ class ApiResponse {
     this.numbers,
     required this.description,
     this.type,
-     this.deviceId,
+    this.deviceId,
     this.points,
   });
 

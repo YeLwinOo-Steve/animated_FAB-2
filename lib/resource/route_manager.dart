@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../presentation/about_2D.dart';
-import '../presentation/about_App.dart';
+import '../presentation/about_2d.dart';
+import '../presentation/about_app.dart';
 import '../presentation/ch_plus_key.dart';
 import '../presentation/home.dart';
 import '../presentation/htoe_kwat.dart';

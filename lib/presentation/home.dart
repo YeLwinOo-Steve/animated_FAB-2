@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import '../data/adservice/ad_service.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../data/adservice/ad_service.dart';
+import '../data/model/model.dart';
 import '../domain/controller.dart';
 import '../resource/resource.dart';
-import '../resource/route_manager.dart';
 import '../widget/radial_menu.dart';
 
 class Home extends StatefulWidget {
@@ -16,23 +16,40 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-Future<void> _launchViber() async {
+/* Future<void> _launchViber() async {
   await launchUrl(
-    Uri.parse('viber://pa?chatURI=+959972090952'),
+    Uri.parse('viber://pa?chatURI=09777662003'),
     mode: LaunchMode.externalNonBrowserApplication,
   );
+} */
+
+void _launchFB() {
+  String fbProtocolUrl = 'fb://page/100083066690008';
+  String fallBackUrl = 'https://www.facebook.com/2dboedaw';
+  canLaunchUrlString(fbProtocolUrl).then((canLaunch) {
+    if (canLaunch) {
+      launchUrlString(fbProtocolUrl,
+          mode: LaunchMode.externalNonBrowserApplication);
+    } else {
+      launchUrlString(fallBackUrl,
+          mode: LaunchMode.externalNonBrowserApplication);
+    }
+  });
 }
 
 class _HomeState extends State<Home> {
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
+
   @override
   void initState() {
     super.initState();
-    _createBannerAd();
+    controller.getPointsByDeviceID(
+        deviceID: '00000000-89ABCDEF-01234567-89ABCDEF');
+    /* _createBannerAd();
     _createInterstitialAd();
-    _createRewardedAd();
+    _createRewardedAd(); */
   }
 
   void _createBannerAd() {
@@ -95,8 +112,8 @@ class _HomeState extends State<Home> {
           _createRewardedAd();
         },
       );
-      //TODO: increase points
       _rewardedAd!.show(
+        //TODO: increase points
         onUserEarnedReward: (ad, reward) => setState(() {}),
       );
       _rewardedAd = null;
@@ -180,8 +197,8 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(right: 15),
               icon: const Icon(Icons.menu, color: ColorManager.primary),
               onPressed: () {
-                _showInterstitialAd();
                 Scaffold.of(context).openEndDrawer();
+                //_showInterstitialAd();
               },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
@@ -198,25 +215,46 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Points',
+                  'Points  ',
                   style: TextStyle(fontSize: FontSize.body2),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  width: 55,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    //textAlign: TextAlign.center,
-                    '100',
-                    style: TextStyle(
-                      fontSize: FontSize.body2,
-                      color: ColorManager.white,
-                      fontWeight: FontWeightManager.semibold,
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    //margin: const EdgeInsets.only(left: 5),
+                    alignment: Alignment.center,
+                    width: 55,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: controller.obx(
+                      (state) {
+                        ApiResponse model = state;
+                        return Text(
+                          model.deviceId.toString(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: FontSize.body2,
+                            color: ColorManager.white,
+                            fontWeight: FontWeightManager.semibold,
+                          ),
+                        );
+                      },
+                    ),
+
+                    /* Text(
+                      '',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: FontSize.body2,
+                        color: ColorManager.white,
+                        fontWeight: FontWeightManager.semibold,
+                      ),
+                    ), */
                   ),
                 ),
               ],
@@ -227,7 +265,9 @@ class _HomeState extends State<Home> {
             splashColor: ColorManager.red,
             highlightColor: ColorManager.white,
             borderRadius: BorderRadius.circular(10),
-            onTap: () => _showRewardedAd(),
+            onTap: () {
+              //_showRewardedAd();
+            },
             child: Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.all(3),
@@ -251,9 +291,9 @@ class _HomeState extends State<Home> {
           RadialMenu(
             isOpen: isOpen,
             onTap: () {
-              setState(() {
+              /* setState(() {
                 isOpen = !isOpen;
-              });
+              }); */
             },
             children: [
               RadialButton(
@@ -339,7 +379,9 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      _launchFB();
+                    },
                     child: SizedBox(
                       height: 45,
                       width: 111.67,

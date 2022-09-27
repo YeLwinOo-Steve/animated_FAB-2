@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../data/api/api_client.dart';
 import '../data/model/model.dart';
-import '../resource/route_manager.dart';
+import '../resource/resource.dart';
 
 class LotteryController extends GetxController with StateMixin<dynamic> {
   final token = '2345235';
@@ -31,16 +31,16 @@ class LotteryController extends GetxController with StateMixin<dynamic> {
       case 'own_number':
         route = AppRoutes.mwalKwat;
         break;
-      case 'ch_key':
+      /* case 'ch_key':
         route = AppRoutes.chPlusKey;
-        break;
+        break; */
     }
     change(null, status: RxStatus.loading());
+    Navigator.pushNamed(context, route);
     _apiClient.lotteryByType(type: type, token: token).then(
       (value) {
         ApiResponse response = value;
         change(response, status: RxStatus.success());
-        Navigator.pushNamed(context, route);
       },
     ).onError(
       (error, stackTrace) {
@@ -53,8 +53,8 @@ class LotteryController extends GetxController with StateMixin<dynamic> {
   }
 
   void getPointsByDeviceID({
-    required BuildContext context,
-    required int deviceID,
+    //required BuildContext context,
+    required String deviceID,
   }) {
     change(null, status: RxStatus.loading());
     _apiClient.getPointsByDeviceID(deviceID: deviceID, token: token).then(
@@ -73,8 +73,8 @@ class LotteryController extends GetxController with StateMixin<dynamic> {
   }
 
   void increasePointsByDeviceID({
-    required BuildContext context,
-    required int deviceID,
+    //required BuildContext context,
+    required String deviceID,
   }) {
     change(null, status: RxStatus.loading());
     _apiClient.increasePointsByDeviceID(deviceID: deviceID, token: token).then(

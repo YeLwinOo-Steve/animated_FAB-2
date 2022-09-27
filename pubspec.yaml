@@ -37,6 +37,7 @@ dependencies:
   url_launcher: ^6.1.5
   get: ^4.6.5
   google_mobile_ads: ^2.0.1
+  platform_device_id: ^1.0.1
   
   
   

@@ -27,7 +27,7 @@ class ApiClient extends GetConnect {
   }
 
   Future<ApiResponse> getPointsByDeviceID({
-    required int deviceID,
+    required String deviceID,
     required String token,
   }) async {
     final response = await get('/points/$deviceID', headers: {
@@ -41,7 +41,7 @@ class ApiClient extends GetConnect {
   }
 
   Future<ApiResponse> increasePointsByDeviceID({
-    required int deviceID,
+    required String deviceID,
     required String token,
   }) async {
     final body = {

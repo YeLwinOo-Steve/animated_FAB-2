@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:platform_device_id/platform_device_id.dart';
+import 'package:store_redirect/store_redirect.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../data/adservice/ad_service.dart';
-import '../data/model/model.dart';
 import '../domain/controller.dart';
 import '../resource/resource.dart';
 import '../widget/radial_menu.dart';
@@ -16,12 +18,14 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-/* Future<void> _launchViber() async {
-  await launchUrl(
-    Uri.parse('viber://pa?chatURI=09777662003'),
-    mode: LaunchMode.externalNonBrowserApplication,
-  );
-} */
+Future<void> _makingPhoneCall() async {
+  var url = Uri.parse('tel:09777662003');
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
 void _launchFB() {
   String fbProtocolUrl = 'fb://page/100083066690008';
@@ -41,17 +45,23 @@ class _HomeState extends State<Home> {
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
-  String device = '00000000-89ABCDEF-01234567-89ABCDEF';
-
+  //String device = '00000000-89ABCDEF-01234567-89ABCDEF';
+  late int totalPoints;
+  late String deviceID;
+  final controller = Get.find<LotteryController>();
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.getPointsByDeviceID(deviceID: device);
+    PlatformDeviceId.getDeviceId.then((id) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        controller.getPointsByDeviceID(deviceID: id);
+      });
     });
     _createBannerAd();
     _createInterstitialAd();
     _createRewardedAd();
+
+    totalPoints = controller.totalPoints;
   }
 
   void _createBannerAd() {
@@ -107,7 +117,10 @@ class _HomeState extends State<Home> {
       _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
+          debugPrint(
+              "----------------------REWARD GRANTED $deviceID--------------------");
           _createRewardedAd();
+          controller.increasePointsByDeviceID(deviceID: deviceID);
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
@@ -115,15 +128,14 @@ class _HomeState extends State<Home> {
         },
       );
       _rewardedAd!.show(
-        //TODO: increase points
-        onUserEarnedReward: (ad, reward) => setState(() {}),
-      );
+          //TODO: increase points
+          onUserEarnedReward: (ad, reward) {});
       _rewardedAd = null;
     }
   }
 
-  final controller = Get.find<LotteryController>();
   bool isOpen = false;
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -233,9 +245,8 @@ class _HomeState extends State<Home> {
                     ),
                     child: controller.obx(
                       (state) {
-                        ApiResponse model = state;
                         return Text(
-                          model.deviceId.toString(),
+                          controller.totalPoints.toString(),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: const TextStyle(
@@ -245,18 +256,17 @@ class _HomeState extends State<Home> {
                           ),
                         );
                       },
-                    ),
-
-                    /* Text(
-                      '',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        fontSize: FontSize.body2,
-                        color: ColorManager.white,
-                        fontWeight: FontWeightManager.semibold,
+                      onLoading: const Text(
+                        '_',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: FontSize.title1,
+                          color: ColorManager.white,
+                          fontWeight: FontWeightManager.bold,
+                        ),
                       ),
-                    ), */
+                    ),
                   ),
                 ),
               ],
@@ -311,12 +321,6 @@ class _HomeState extends State<Home> {
                       context: context, type: 'one_change');
                 },
               ),
-              /* RadialButton(
-                text: 'Ch + Key',
-                onPress: () {
-                  controller.lotteryByType(context: context, type: 'ch_key');
-                },
-              ), */
               RadialButton(
                 text: 'မွေးကွက်',
                 onPress: () {
@@ -362,7 +366,7 @@ class _HomeState extends State<Home> {
                 children: [
                   InkWell(
                     onTap: () {
-                      //_launchViber();
+                      _makingPhoneCall();
                     },
                     child: SizedBox(
                       height: 45,
@@ -401,7 +405,13 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    //com.example.lucky_number_2d
+                    onTap: () {
+                      StoreRedirect.redirect(
+                        androidAppId: 'com.example.lucky_number_2d',
+                        iOSAppId: null,
+                      );
+                    },
                     child: SizedBox(
                       height: 45,
                       width: 111.67,

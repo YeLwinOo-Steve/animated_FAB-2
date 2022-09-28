@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../model/model.dart';
@@ -27,7 +28,7 @@ class ApiClient extends GetConnect {
   }
 
   Future<ApiResponse> getPointsByDeviceID({
-    required String deviceID,
+    required String? deviceID,
     required String token,
   }) async {
     final response = await get('/points/$deviceID', headers: {
@@ -41,7 +42,7 @@ class ApiClient extends GetConnect {
   }
 
   Future<ApiResponse> increasePointsByDeviceID({
-    required String deviceID,
+    required String? deviceID,
     required String token,
   }) async {
     final body = {
@@ -50,6 +51,7 @@ class ApiClient extends GetConnect {
 
     final response = await post('/points', body, headers: {'token': token});
     final res = ApiResponse.fromJson(response.body);
+    debugPrint("API RESPONSE ===============${res.message}==========================");
     if (response.status.hasError) {
       return Future.error(res.message);
     } else {

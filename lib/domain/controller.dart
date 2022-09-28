@@ -8,6 +8,7 @@ import '../resource/resource.dart';
 class LotteryController extends GetxController with StateMixin<dynamic> {
   final token = '2345235';
   final ApiClient _apiClient;
+  RxInt _totalPoints = 0.obs;
   LotteryController({required ApiClient client}) : _apiClient = client;
 
   void lotteryByType({
@@ -52,14 +53,17 @@ class LotteryController extends GetxController with StateMixin<dynamic> {
     );
   }
 
+  int get totalPoints => _totalPoints.value;
+
   void getPointsByDeviceID({
     //required BuildContext context,
-    required String deviceID,
+    required String? deviceID,
   }) {
     change(null, status: RxStatus.loading());
     _apiClient.getPointsByDeviceID(deviceID: deviceID, token: token).then(
       (value) {
         ApiResponse response = value;
+        _totalPoints.value = response.points!;
         change(response, status: RxStatus.success());
       },
     ).onError(
@@ -76,10 +80,13 @@ class LotteryController extends GetxController with StateMixin<dynamic> {
     //required BuildContext context,
     required String deviceID,
   }) {
+    debugPrint("DEVICE ID ----------------------->>>>$deviceID");
     change(null, status: RxStatus.loading());
     _apiClient.increasePointsByDeviceID(deviceID: deviceID, token: token).then(
       (value) {
         ApiResponse response = value;
+        print('RESPONSE--------------------------------------' +
+            response.points.toString());
         change(response, status: RxStatus.success());
       },
     ).onError(

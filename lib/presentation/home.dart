@@ -41,15 +41,17 @@ class _HomeState extends State<Home> {
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
+  String device = '00000000-89ABCDEF-01234567-89ABCDEF';
 
   @override
   void initState() {
     super.initState();
-    controller.getPointsByDeviceID(
-        deviceID: '00000000-89ABCDEF-01234567-89ABCDEF');
-    /* _createBannerAd();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.getPointsByDeviceID(deviceID: device);
+    });
+    _createBannerAd();
     _createInterstitialAd();
-    _createRewardedAd(); */
+    _createRewardedAd();
   }
 
   void _createBannerAd() {
@@ -198,7 +200,7 @@ class _HomeState extends State<Home> {
               icon: const Icon(Icons.menu, color: ColorManager.primary),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
-                //_showInterstitialAd();
+                _showInterstitialAd();
               },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
@@ -266,7 +268,7 @@ class _HomeState extends State<Home> {
             highlightColor: ColorManager.white,
             borderRadius: BorderRadius.circular(10),
             onTap: () {
-              //_showRewardedAd();
+              _showRewardedAd();
             },
             child: Container(
               alignment: Alignment.center,
@@ -291,9 +293,9 @@ class _HomeState extends State<Home> {
           RadialMenu(
             isOpen: isOpen,
             onTap: () {
-              /* setState(() {
+              setState(() {
                 isOpen = !isOpen;
-              }); */
+              });
             },
             children: [
               RadialButton(
